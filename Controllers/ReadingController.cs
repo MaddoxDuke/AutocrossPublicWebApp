@@ -6,7 +6,7 @@ using HtmlAgilityPack;
 
 namespace AutocrossPublicWebApp.Controllers
 {
-    internal class ReadingController
+    public class ReadingController
     {
 
         ReadingModel Reading = new ReadingModel();
