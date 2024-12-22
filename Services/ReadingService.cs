@@ -1,12 +1,10 @@
-﻿using System;
-using System.Linq;
-using System.Net.Http;
-using AutocrossPublicWebApp.Models;
+﻿using AutocrossPublicWebApp.Models;
+using AutocrossPublicWebApp.Controllers;
 using HtmlAgilityPack;
 
-namespace AutocrossPublicWebApp.Controllers
+namespace AutocrossPublicWebApp.Services
 {
-    public class ReadingController
+    public class ReadingService : ReadingModel
     {
 
         ReadingModel Reading = new ReadingModel();
@@ -15,7 +13,7 @@ namespace AutocrossPublicWebApp.Controllers
         {
 
 
-            Reading.paxRaw = false;
+            Reading.PaxRaw = false;
             int currentYear = DateTime.Now.Year;
             string url = null;
             string[] urls = new string[12];
@@ -88,7 +86,7 @@ namespace AutocrossPublicWebApp.Controllers
         public void setYearDoc(int Year, bool paxAndRaw)
         {
 
-            Reading.paxRaw = paxAndRaw;
+            Reading.PaxRaw = paxAndRaw;
             int currentYear = DateTime.Now.Year;
             string url = null;
             string[] urls = new string[12];
@@ -158,6 +156,64 @@ namespace AutocrossPublicWebApp.Controllers
                 Console.WriteLine("Loading... (" + (j + 1) + "/" + Reading.DocSize + ")");
             }
         }
+        public List<string> Output(List<string> results) {
+
+            results = new List<string>();
+
+            int eventCount = 0;
+
+            string notParticipatedString = "Did not participate in event(s)# ";
+
+            results.Add("\nResults for " + Reading.Name + ": ");
+
+            for (int j = 0; j < Reading.DocSize; j++) {
+
+                int counter = 1;
+
+                while (Reading.TrNthChild[j] == 0) {
+                    eventCount++;
+                    notParticipatedString += (j + 1).ToString() + ", ";
+
+                    if (j == Reading.DocSize - 1) break;
+                    else j++;
+                }
+
+                if (eventCount == Reading.DocSize) results.Add(Reading.Name + " did not participate in any events for the year " + Reading.Year);
+
+                if (j == Reading.DocSize - 1 && Reading.TrNthChild[j] == 0) break;
+
+                if (!Reading.PaxRaw) {
+                    string classLabel = Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[2]").InnerText;
+
+                    results.Add("\nClass: " + classLabel);
+
+                    for (int i = 7; i <= 9; i++) {
+                        results.Add("Run " + counter + ":" + Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[" + i + "]").InnerText);
+                        counter++;
+
+                        results.Add("Run " + counter + ": " + Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + (Reading.TrNthChild[j] + 1) + "]/td[" + i + "]").InnerText);// time results, second row.
+                        counter++;
+                    }
+
+                    results.Add("Placement: " + Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[1]").InnerText + "\n");
+                } else {
+
+                    string classLabel = Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[3]").InnerText;
+                    results.Add("\nClass: " + classLabel);
+
+                    results.Add("Pax Time" + ": " + Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[9]").InnerText);
+                    results.Add("Raw Time" + ": " + Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[7]").InnerText);
+
+                    results.Add("Pax Position: " + Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[1]").InnerText);
+                    results.Add("Class Position: " + Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[2]").InnerText + "\n");
+
+                }
+                if (j == Reading.DocSize - 1) notParticipatedString += j.ToString();
+
+            }
+
+            return results;
+        } 
         public void OutputToConsole()
         {
 
@@ -185,7 +241,7 @@ namespace AutocrossPublicWebApp.Controllers
 
                 if (j == Reading.DocSize - 1 && Reading.TrNthChild[j] == 0) break;
 
-                if (!Reading.paxRaw)
+                if (!Reading.PaxRaw)
                 {
                     string classLabel = Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[2]").InnerText;
 

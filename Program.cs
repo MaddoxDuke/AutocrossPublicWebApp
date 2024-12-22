@@ -1,7 +1,11 @@
+using AutocrossPublicWebApp.Models;
+using AutocrossPublicWebApp.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container. 
 builder.Services.AddRazorPages();
+builder.Services.AddScoped<ReadingService>();
 
 var app = builder.Build();
 

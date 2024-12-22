@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace AutocrossPublicWebApp.Pages {
-    public class PrivacyModel : PageModel {
-        private readonly ILogger<PrivacyModel> _logger;
+    public class ContactModel : PageModel {
+        private readonly ILogger<ContactModel> _logger;
 
-        public PrivacyModel(ILogger<PrivacyModel> logger) {
+        public ContactModel(ILogger<ContactModel> logger) {
             _logger = logger;
         }
 

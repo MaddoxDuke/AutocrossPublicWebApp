@@ -10,6 +10,6 @@ namespace AutocrossPublicWebApp.Models
         public int DocSize { get; set; }
         public int Year { get; set; }
         public int[] TrNthChild { get; set; }
-        public bool paxRaw { get; set; }
+        public bool PaxRaw { get; set; }
     }
 }

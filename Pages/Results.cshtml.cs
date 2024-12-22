@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace AutocrossPublicWebApp.Pages.Views
 {
-    public class Index1Model : PageModel
+    public class ResultsModel : PageModel
     {
         public void OnGet()
         {

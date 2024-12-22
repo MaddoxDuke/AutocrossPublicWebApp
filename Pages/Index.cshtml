@@ -45,26 +45,27 @@
 </section>
 <section class="search-sec">
     <div class="container">
-        <form action="#" method="post" novalidate="novalidate">
+        <form asp-action="Index" asp-controller="Results" method="post" novalidate="novalidate">
             <div class="row">
                 <div class="col-lg-12">
                     <div class="row">
                         <div class="form-group">
-                            <label asp-for="Name">Name</label>
-                            <input asp-for="Name" class="form-control search-slt" placeholder="LastName, FirstName">
-                            <span asp-validation-for="Name" class="text-danger"></span>
+                            <label asp-for="@Model.Name">Name</label>
+                            <input asp-for="@Model.Name" class="form-control search-slt" placeholder="LastName, FirstName">
+                            <span asp-validation-for="@Model.Name" class="text-danger"></span>
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-12 p-0">
-                            <input type="number" class="form-control search-slt" placeholder="Year" min="0" step="1">
+                            <label asp-for="@Model.Year">Year</label>
+                            <input asp-for="@Model.Year" type="number" class="form-control search-slt" placeholder="Year" min="0" step="1">
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-12 p-0">
-                            <select class="form-control search-slt" id="exampleFormControlSelect1">
-                                <option>Final Results</option>
-                                <option>Raw and Pax Results</option>
+                            <select asp-for="@Model.PaxRaw" class="form-control search-slt" id="exampleFormControlSelect1">
+                                <option value=false>Final Results</option>
+                                <option value=true>Raw and Pax Results</option>
                             </select>
                         </div>
                         <div class="col-lg-3 col-md-3 col-sm-12 p-0">
-                            <a type="btn btn-success" asp-controller="Index" asp-action="Results">Search</a>
+                            <a class="btn btn-success" asp-area="" asp-page="/Results">Search</a>
                         </div>
                     </div>
                 </div>

@@ -1,22 +1,40 @@
 ﻿using AutocrossPublicWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using AutocrossPublicWebApp.Services;
 
 namespace AutocrossPublicWebApp.Controllers {
     public class ResultsController : Controller {
         // GET: ResultsController
-        public async Task<IActionResult> Index(ReadingController reading, ReadingModel readingModel) {
+        private readonly ReadingService _readingService;
 
-            int CurrentYear = DateTime.Now.Year;
-            // if (readingModel.Year < CurrentYear - 10 || readingModel.Year > CurrentYear) return ModelState.AddModelError("", "Year Invalid: must be within the last 10 years.");
+        public ResultsController(ReadingService readingService) {
+            _readingService = readingService;
+        }
+        public IActionResult Results() {
+            var model = new ReadingModel {
+                Name = "Molyneux, Matthew",
+                Year = 2024
+            };
 
-            reading.setYearDoc(readingModel.Year);
-            reading.setTrNthChild(readingModel.Name);
+            return View(model);
+        }
+        public async Task<IActionResult> Index() {
 
-            IEnumerable<string> results = Enumerable.Empty<string>();
 
-            //Add valid results here to the IEnumerable, results
+            var CurrentYear = DateTime.Now.Year;
+            if (_readingService.Year < CurrentYear - 10 || _readingService.Year > CurrentYear) {
+                return BadRequest("Year Invalid: must be within the last 10 years.");
+            }
+
+            _readingService.setYearDoc(_readingService.Year);
+            _readingService.setTrNthChild(_readingService.Name);
+
+            var results = new List<string>();
+
+            _readingService.Output(results);
 
             return View(results);
+
         }
 
         // GET: ResultsController/Details/5
