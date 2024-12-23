@@ -1,20 +1,24 @@
 ﻿using AutocrossPublicWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
-using AutocrossPublicWebApp.Services;
+using AutocrossPublicWebApp.Data;
 using System.Net;
+using AutocrossPublicWebApp.Repositories;
 
 namespace AutocrossPublicWebApp.Controllers {
     public class ResultsController : Controller {
         // GET: ResultsController
-        private readonly ReadingService _readingService;
+        private readonly ApplicationDbContext _context;
+        private readonly ReadingRepository _readingRepository;
 
-        public ResultsController(ReadingService readingService) {
-            _readingService = readingService;
+
+        public ResultsController(ApplicationDbContext context, ReadingRepository readingRepository) {
+            _context = context;
+            _readingRepository = readingRepository;
         }
         [HttpPost]
         public async Task<IActionResult> Results(ReadingModel modelVM) {
 
-            var result = _readingService;
+            var result = _readingRepository;
             if (ModelState.IsValid) {
 
                 var model = new ReadingModel {
@@ -23,7 +27,8 @@ namespace AutocrossPublicWebApp.Controllers {
                     PaxRaw = modelVM.PaxRaw
                 };
 
-                _readingService.Add(model);
+                _context.Add(model); // adds to db
+                _context.Save();
 
                 return RedirectToAction("Results");
             } else {
@@ -36,7 +41,7 @@ namespace AutocrossPublicWebApp.Controllers {
 
             Console.WriteLine("\n\nIndex Action:\nName " + model.Name + "Year " + model.Year + "\n\n");
 
-            if (_readingService.Year < CurrentYear - 10 || _readingService.Year > CurrentYear) {
+            if (model.Year < CurrentYear - 10 || model.Year > CurrentYear) {
                 return BadRequest("Year Invalid: must be within the last 10 years.");
             }
             if (!ModelState.IsValid) {
@@ -48,7 +53,7 @@ namespace AutocrossPublicWebApp.Controllers {
             //_readingService.setTrNthChild(model.Name);
 
             var results = new List<string>();
-            _readingService.Output(results);
+            _readingRepository.Output(results);
 
             return View(model);
         }

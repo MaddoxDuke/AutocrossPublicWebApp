@@ -1,12 +1,18 @@
 using AutocrossPublicWebApp.Models;
 using AutocrossPublicWebApp.Services;
-using Microsoft.AspNetCore.Mvc;
+using AutocrossPublicWebApp.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container. 
 builder.Services.AddRazorPages();
-builder.Services.AddScoped<ReadingService>();
+builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<ReadingModel>();
+builder.Services.AddScoped<IReadingRepository, ReadingRepository>();
+builder.Services.AddDbContext<ApplicationDbContext>(options => //adds the Database into the application
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 
 var app = builder.Build();
 
