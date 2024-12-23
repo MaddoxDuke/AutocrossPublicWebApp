@@ -1,6 +1,7 @@
 ﻿using AutocrossPublicWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using AutocrossPublicWebApp.Services;
+using System.Net;
 
 namespace AutocrossPublicWebApp.Controllers {
     public class ResultsController : Controller {
@@ -10,31 +11,46 @@ namespace AutocrossPublicWebApp.Controllers {
         public ResultsController(ReadingService readingService) {
             _readingService = readingService;
         }
-        public IActionResult Results() {
-            var model = new ReadingModel {
-                Name = "Molyneux, Matthew",
-                Year = 2024
-            };
+        [HttpPost]
+        public async Task<IActionResult> Results(ReadingModel modelVM) {
 
-            return View(model);
+            var result = _readingService;
+            if (ModelState.IsValid) {
+
+                var model = new ReadingModel {
+                    Name = modelVM.Name,
+                    Year = modelVM.Year,
+                    PaxRaw = modelVM.PaxRaw
+                };
+
+                _readingService.Add(model);
+
+                return RedirectToAction("Results");
+            } else {
+                ModelState.AddModelError("", "ReadingModel population failed");
+            }
+            return View(modelVM);
         }
-        public async Task<IActionResult> Index() {
-
-
+        public async Task<IActionResult> Index(ReadingModel model) {
             var CurrentYear = DateTime.Now.Year;
+
+            Console.WriteLine("\n\nIndex Action:\nName " + model.Name + "Year " + model.Year + "\n\n");
+
             if (_readingService.Year < CurrentYear - 10 || _readingService.Year > CurrentYear) {
                 return BadRequest("Year Invalid: must be within the last 10 years.");
             }
+            if (!ModelState.IsValid) {
+                Console.WriteLine("ModelState error");
+                return View("Index", model); // Return to the form with validation messages
+            }
 
-            _readingService.setYearDoc(_readingService.Year);
-            _readingService.setTrNthChild(_readingService.Name);
+            //_readingService.setYearDoc(model.Year);
+            //_readingService.setTrNthChild(model.Name);
 
             var results = new List<string>();
-
             _readingService.Output(results);
 
-            return View(results);
-
+            return View(model);
         }
 
         // GET: ResultsController/Details/5

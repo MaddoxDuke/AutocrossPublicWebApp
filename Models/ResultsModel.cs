@@ -2,7 +2,8 @@
 {
     internal class ResultsModel
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
+        public int? Year { get; set; }
         public string AutoxClass { get; set; }
         public string ClassPlacement { get; set; }
         public string PaxPlacement { get; set; }

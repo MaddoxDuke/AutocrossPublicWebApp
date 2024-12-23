@@ -1,5 +1,6 @@
 using AutocrossPublicWebApp.Models;
 using AutocrossPublicWebApp.Services;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
