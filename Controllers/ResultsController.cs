@@ -1,61 +1,29 @@
 ﻿using AutocrossPublicWebApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using AutocrossPublicWebApp.Data;
-using System.Net;
-using AutocrossPublicWebApp.Repositories;
+using AutocrossPublicWebApp.ViewModels;
+using AutocrossPublicWebApp.Interfaces;
 
 namespace AutocrossPublicWebApp.Controllers {
     public class ResultsController : Controller {
         // GET: ResultsController
         private readonly ApplicationDbContext _context;
-        private readonly ReadingRepository _readingRepository;
+        private readonly IResultsRepository _resultsRepository;
 
 
-        public ResultsController(ApplicationDbContext context, ReadingRepository readingRepository) {
+        public ResultsController(ApplicationDbContext context, IResultsRepository resultsRepository) {
             _context = context;
-            _readingRepository = readingRepository;
+            _resultsRepository = resultsRepository;
         }
-        [HttpPost]
-        public async Task<IActionResult> Results(ReadingModel modelVM) {
+        public async Task<IActionResult> Results(EventResult modelVM) {
+            Console.WriteLine("Results");
 
-            var result = _readingRepository;
-            if (ModelState.IsValid) {
-
-                var model = new ReadingModel {
-                    Name = modelVM.Name,
-                    Year = modelVM.Year,
-                    PaxRaw = modelVM.PaxRaw
-                };
-
-                _context.Add(model); // adds to db
-                _context.Save();
-
-                return RedirectToAction("Results");
-            } else {
-                ModelState.AddModelError("", "ReadingModel population failed");
-            }
             return View(modelVM);
         }
-        public async Task<IActionResult> Index(ReadingModel model) {
-            var CurrentYear = DateTime.Now.Year;
+        public async Task<IActionResult> Index() {
 
-            Console.WriteLine("\n\nIndex Action:\nName " + model.Name + "Year " + model.Year + "\n\n");
-
-            if (model.Year < CurrentYear - 10 || model.Year > CurrentYear) {
-                return BadRequest("Year Invalid: must be within the last 10 years.");
-            }
-            if (!ModelState.IsValid) {
-                Console.WriteLine("ModelState error");
-                return View("Index", model); // Return to the form with validation messages
-            }
-
-            //_readingService.setYearDoc(model.Year);
-            //_readingService.setTrNthChild(model.Name);
-
-            var results = new List<string>();
-            _readingRepository.Output(results);
-
-            return View(model);
+            IEnumerable<EventResult> eventResults = await _resultsRepository.GetAll(); //M: Db to events and builsd query/db and brings back.
+            return View(eventResults); //V
         }
 
         // GET: ResultsController/Details/5
@@ -64,8 +32,26 @@ namespace AutocrossPublicWebApp.Controllers {
         }
 
         // GET: ResultsController/Create
-        public ActionResult Create() {
-            return View();
+        public async Task<IActionResult> Create(EventResultViewModel resultVM) {
+
+            Console.WriteLine("Checking Model validity in Create");
+
+            if (ModelState.IsValid) {
+                Console.WriteLine("Model is valid");
+
+                var model = new EventResult {
+                    Name = resultVM.Name,
+                    Year = resultVM.Year,
+                    PaxRaw = resultVM.PaxRaw
+                };
+                
+                _resultsRepository.Add(model); // adds to db
+                return RedirectToAction("Results"); //This redirects, not the html page.
+            } else {
+                ModelState.AddModelError("", "ResultsModel population failed");
+            }
+            return RedirectToAction("Results");
+            //return View(resultVM);
         }
 
         // POST: ResultsController/Create

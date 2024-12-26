@@ -1,0 +1,27 @@
+﻿@using AutocrossPublicWebApp.ViewModels;
+@model EventResultViewModel
+@{
+    ViewData["Title"] = "Home page";
+
+}
+<form method="post" asp-controller="Results" asp-action="Index" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Name">Name</label>
+        <input asp-for="Name" class="form-control" placeholder="Name">
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Year">Year</label>
+        <input asp-for="Year" class="form-control" placeholder="Year">
+        <span asp-validation-for="Year" class="text-danger"></span>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-12 p-0">
+        <label asp-for="PaxRaw">Search Type</label>
+        <select asp-for="PaxRaw" class="form-control form-control-lg">
+            <option value=false>Final Results</option>
+            <option value=true>Raw and Pax Results</option>
+        </select>
+        <span asp-validation-for="PaxRaw" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>

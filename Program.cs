@@ -1,14 +1,13 @@
-using AutocrossPublicWebApp.Models;
-using AutocrossPublicWebApp.Services;
+using Microsoft.EntityFrameworkCore;
 using AutocrossPublicWebApp.Interfaces;
+using AutocrossPublicWebApp.Data;
+using AutocrossPublicWebApp.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container. 
-builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<ReadingModel>();
-builder.Services.AddScoped<IReadingRepository, ReadingRepository>();
+builder.Services.AddScoped<IResultsRepository, ResultsRepository>();
 builder.Services.AddDbContext<ApplicationDbContext>(options => //adds the Database into the application
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -30,6 +29,8 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapRazorPages();
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();

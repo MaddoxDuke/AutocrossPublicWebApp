@@ -4,10 +4,10 @@ using AutocrossPublicWebApp.Models;
 namespace AutocrossPublicWebApp.Data {
     public class ApplicationDbContext : DbContext {
 
-        public ApplicatonDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
 
         }
         //Db Tables
-        public DbSet<ResultsModel> Results { get; set; }
+        public DbSet<EventResult> EventResults { get; set; }
     }
 }
