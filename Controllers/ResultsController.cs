@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using AutocrossPublicWebApp.Data;
 using AutocrossPublicWebApp.ViewModels;
 using AutocrossPublicWebApp.Interfaces;
+using AutocrossPublicWebApp.Services;
 
 namespace AutocrossPublicWebApp.Controllers {
     public class ResultsController : Controller {
@@ -16,9 +17,15 @@ namespace AutocrossPublicWebApp.Controllers {
             _resultsRepository = resultsRepository;
         }
         public async Task<IActionResult> Results(EventResult modelVM) {
-            Console.WriteLine("Results");
+            var service = new ReadingService {
+                Name = modelVM.Name,
+                Year = modelVM.Year,
+                PaxRaw = modelVM.PaxRaw
+            };
 
-            return View(modelVM);
+            service.Search(modelVM);
+
+            return View(service.saveToEventResult(modelVM));
         }
         public async Task<IActionResult> Index() {
 

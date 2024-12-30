@@ -1,0 +1,51 @@
+﻿@model EventResult
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Property</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Name</td>
+            <td>@Model.Name</td>
+        </tr>
+        <tr>
+            <td>Year</td>
+            <td>@Model.Year</td>
+        </tr>
+        <tr>
+            <td>PaxRaw</td>
+            <td>@Model.PaxRaw</td>
+        </tr>
+
+        @{
+            int i = 0;
+        }
+        @for (int j = 0; j < Model.AutoxClass.Count; j++) {
+            <tr>
+                <td>Event #@(j + 1)</td>
+                <td>
+                    <strong>AutoxClass:</strong> @Model.AutoxClass[j] <br>
+                    <strong>ClassPlacement:</strong> @Model.ClassPlacement[j] <br>
+                    @if (Model.PaxRaw == true) {
+                        <strong>PaxPlacement:</strong> @Model.PaxPlacement[j] <br>
+                        <strong>Pax Time:</strong> @Model.PaxTime[j] <br>
+                        <strong>Raw Time:</strong> @Model.RawTime[j] <br>
+                    } else {
+                        while (@i < Model.FinalTimes.Count) {
+                            if (Model.FinalTimes[i] == "") {
+                                i++;
+                                break;
+                            }
+                            i++;
+                            <strong>Run #@(i + 1):</strong> @Model.FinalTimes[i] <br>
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
