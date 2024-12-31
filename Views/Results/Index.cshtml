@@ -1,0 +1,67 @@
+﻿@model List<EventResult>
+
+<style>
+    table {
+        border-collapse: separate; /* Ensures border-spacing is applied */
+        border-spacing: 0 15px; /* Adds 15px vertical spacing between rows */
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #ccc; /* Optional, for visibility */
+        padding: 10px;
+        text-align: center;
+    }
+</style>
+
+
+<table border="1">
+    <tbody>
+        <tr>
+            <td>Name</td>
+            <td>@Model[0].Name</td>
+        </tr>
+        <tr>
+            <td>Year</td>
+            <td>@Model[0].Year</td>
+        </tr>
+        @foreach (var item in Model) {
+            int runCounter = 1;
+            @if (item.AutoxClass == "DNP") {
+                <tr>
+                    <td>
+                        <strong>@item.Name did not Participate for the year of @item.Year</strong>
+                    </td>
+                </tr>
+
+                break;
+            }
+            <tr>
+                <td>Event #@item.EventNum</td>
+                <td>
+                    <strong>AutoxClass:</strong> @item.AutoxClass <br>
+                    <strong>ClassPlacement:</strong> @item.ClassPlacement <br>
+                    @if (item.PaxRaw == true) {
+                        <strong>PaxPlacement:</strong> @item.PaxPlacement <br>
+                        <strong>Pax Time:</strong> @item.PaxTime <br>
+                        <strong>Raw Time:</strong> @item.RawTime <br>
+                    } 
+                    else {
+                        foreach (var runTime in @item.FinalTimes) {
+                            if (runTime == "") {
+                                <td>
+                                    <strong>Run#@runCounter:</strong> No run collected <br>
+                                </td>
+                            } else {
+                            <td>
+                                <strong>Run #@(runCounter):</strong> @runTime <br>
+                            </td>
+                            }
+                            runCounter++;
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

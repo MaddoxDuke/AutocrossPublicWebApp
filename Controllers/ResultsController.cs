@@ -4,6 +4,7 @@ using AutocrossPublicWebApp.Data;
 using AutocrossPublicWebApp.ViewModels;
 using AutocrossPublicWebApp.Interfaces;
 using AutocrossPublicWebApp.Services;
+using Microsoft.AspNetCore.Http;
 
 namespace AutocrossPublicWebApp.Controllers {
     public class ResultsController : Controller {
@@ -16,21 +17,19 @@ namespace AutocrossPublicWebApp.Controllers {
             _context = context;
             _resultsRepository = resultsRepository;
         }
-        public async Task<IActionResult> Results(EventResult modelVM) {
-            var service = new ReadingService {
-                Name = modelVM.Name,
+        public async Task<IActionResult> Index(EventResultViewModel modelVM) {
+
+            var service = new ReadingService();
+
+            var readingModel = new ReadingModel {
+                Name = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase((modelVM.LastName.Trim() + ", " + modelVM.FirstName.Trim()).ToLower()),
                 Year = modelVM.Year,
                 PaxRaw = modelVM.PaxRaw
             };
 
-            service.Search(modelVM);
+            service.Search(readingModel);
 
-            return View(service.saveToEventResult(modelVM));
-        }
-        public async Task<IActionResult> Index() {
-
-            IEnumerable<EventResult> eventResults = await _resultsRepository.GetAll(); //M: Db to events and builsd query/db and brings back.
-            return View(eventResults); //V
+            return View(service.saveToEventResult());
         }
 
         // GET: ResultsController/Details/5
@@ -47,7 +46,7 @@ namespace AutocrossPublicWebApp.Controllers {
                 Console.WriteLine("Model is valid");
 
                 var model = new EventResult {
-                    Name = resultVM.Name,
+                    Name = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase((resultVM.LastName.Trim() + ", " + resultVM.FirstName.Trim()).ToLower()),
                     Year = resultVM.Year,
                     PaxRaw = resultVM.PaxRaw
                 };

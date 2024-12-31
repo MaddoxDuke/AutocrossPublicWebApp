@@ -3,6 +3,7 @@ using AutocrossPublicWebApp.Controllers;
 using HtmlAgilityPack;
 using System.Diagnostics.Tracing;
 using System.Globalization;
+using AutocrossPublicWebApp.ViewModels;
 
 namespace AutocrossPublicWebApp.Services
 {
@@ -127,62 +128,76 @@ namespace AutocrossPublicWebApp.Services
 
 
         }
-        public EventResult saveToEventResult(EventResult resultModel) {
+        public List<EventResult> saveToEventResult() {
 
 			int eventCount = 0;
-            string temp = "";
-           
-			resultModel.FinalTimes = new List<string>();
-            resultModel.ClassPlacement = new List<string>();
-            resultModel.PaxPlacement = new List<string>();
-            resultModel.AutoxClass = new List<string>();
-            resultModel.PaxTime = new List<float>();
-            resultModel.RawTime = new List<float>();
-            resultModel.EventNum = new List<int>();
 
+            List<EventResult> results = new List<EventResult>();            
 
 			for (int j = 0; j < Reading.DocSize; j++) {
-				while (Reading.TrNthChild[j] == 0) {
+
+                string temp = "";
+
+                EventResult result = new EventResult();
+
+                result.Name = Reading.Name;
+                result.Year = Reading.Year;
+                result.PaxRaw = Reading.PaxRaw;
+                result.DidNotParticipate = false;
+
+                while (Reading.TrNthChild[j] == 0) {
 					eventCount++;
+
 					if (j == Reading.DocSize - 1) break;
 					else j++;
 				}
-                resultModel.EventNum.Add(j);
+                result.EventNum = j + 1;
 
-                if (j != 0 && j != (Reading.DocSize-1)) resultModel.FinalTimes.Add("/");
+                // Can be used to check if not participated in any events
+                if (eventCount == Reading.DocSize) {
 
-				if (eventCount == Reading.DocSize) Console.WriteLine(Reading.Name + " did not participate in any events for the year " + Reading.Year);
+                    result.AutoxClass = "DNP";
+                    results.Add(result);
 
-				if (j == Reading.DocSize - 1 && Reading.TrNthChild[j] == 0) break;
+                    return results;
+                }
 
-				if (!Reading.PaxRaw) {
+                if (j == Reading.DocSize - 1 && Reading.TrNthChild[j] == 0) {
+                    result.DidNotParticipate = true;
+                    break;
+                }
 
-					resultModel.AutoxClass.Add(Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[2]").InnerText);
+                result.FinalTimes = new List<string>();
+
+                if (!Reading.PaxRaw) {
+
+                    result.AutoxClass = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[2]").InnerText);
 
 					for (int i = 7; i <= 9; i++) {
 						temp = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[" + i + "]").InnerText);
-                        resultModel.FinalTimes.Add(temp);
+                        result.FinalTimes.Add(temp);
 						temp = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + (Reading.TrNthChild[j] + 1) + "]/td[" + i + "]").InnerText);// time results, second row.
-						resultModel.FinalTimes.Add(temp);
+						result.FinalTimes.Add(temp);
 					}
 
-					resultModel.ClassPlacement.Add(Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[1]").InnerText);
+					result.ClassPlacement = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[1]").InnerText);
 				} else {
 
-					resultModel.AutoxClass.Add(Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[3]").InnerText);
+					result.AutoxClass = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[3]").InnerText);
 
-					resultModel.PaxTime.Add(float.Parse(Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[9]").InnerText, CultureInfo.InvariantCulture.NumberFormat));
-					resultModel.RawTime.Add(float.Parse(Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[7]").InnerText, CultureInfo.InvariantCulture.NumberFormat));
+					result.PaxTime = (float.Parse(Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[9]").InnerText, CultureInfo.InvariantCulture.NumberFormat));
+					result.RawTime = (float.Parse(Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[7]").InnerText, CultureInfo.InvariantCulture.NumberFormat));
 
-					resultModel.PaxPlacement.Add(Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[1]").InnerText);
-					resultModel.ClassPlacement.Add(Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[2]").InnerText);
+					result.PaxPlacement = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[1]").InnerText);
+					result.ClassPlacement = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[2]").InnerText);
 
 				}
-			}
-            if (Reading.PaxRaw) for (int i = 0; i < resultModel.FinalTimes.Count; i++) Console.WriteLine(resultModel.FinalTimes[i]);
-            return resultModel;
+                if (!result.DidNotParticipate) results.Add(result);
+              
+            }
+            return results;
         }
-        public void Search(EventResult result) {
+        public void Search(ReadingModel result) {
             setYearDoc(result.Year, result.PaxRaw);
             setTrNthChild(result.Name, result.PaxRaw);
         }

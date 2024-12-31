@@ -1,8 +1,106 @@
 ﻿<h1>@ViewData["Title"]</h1>
 
-<div>
-    <h2>Contact Details</h2>
-    <ul>
-        <li><strong>Email:</strong> Maddoxduke911@Gmail.com</li>
-    </ul>
-</div>
+@model ContactFormModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        section {
+            padding: 20px;
+            margin: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        .contact-details {
+            list-style-type: none;
+            padding: 0;
+        }
+
+            .contact-details li {
+                margin: 10px 0;
+                font-size: 1.1em;
+            }
+
+        .contact-form {
+            margin-top: 30px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background-color: #555;
+            }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Contact Us</h1>
+        <p>If you encounter any bugs or errors, please reach out to us below!</p>
+    </header>
+
+    <section>
+        <h2>Contact Details</h2>
+        <ul class="contact-details">
+            <li><strong>Email:</strong> <a href="mailto:Maddoxduke911@Gmail.com">Maddoxduke911@Gmail.com</a></li>
+            <li><strong>Phone:</strong> (123) 456-7890</li>
+        </ul>
+
+        <div class="contact-form">
+            <h3>Send Us a Message</h3>
+            <form action="mailto:Maddoxduke911@Gmail.com" method="post" enctype="text/plain">
+                <label for="name">Your Name:</label>
+                <input type="text" id="name" name="name" class="form-control" required>
+
+                <label for="email">Your Email:</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" class="form-control" rows="6" required></textarea>
+
+                <button type="submit">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+</body>
+</html>

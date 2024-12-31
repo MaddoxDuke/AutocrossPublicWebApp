@@ -1,5 +1,5 @@
 ﻿@using AutocrossPublicWebApp.ViewModels;
-@model EventResult
+@model EventResultViewModel
 @{
     ViewData["Title"] = "Home page";
 
@@ -9,69 +9,128 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-bottom: 20px; /* Space between image and search section */
+        margin-bottom: 20px;
     }
 
         .image-sec img {
-            max-width: 100%; /* Ensure the image doesn't overflow */
-            height: auto; /* Maintain aspect ratio */
-            max-height: 400px; /* Optional: Limit maximum height */
+            max-width: 100%;
+            height: auto;
+            max-height: 400px;
         }
+
     .search-sec {
         display: flex;
         justify-content: center;
         align-items: center;
+        margin-top: 20px;
     }
 
-        .search-sec .container {
-            max-width: 850px; /* Adjust width as needed */
-            margin-right: 80px;
+        .search-sec form {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap; /* Ensure the form wraps on smaller screens */
         }
 
-        .search-sec .row {
-            justify-content: center; /* Center horizontally */
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group-inline {
+        display: flex;
+        flex-direction: row; /* Align First and Last Name horizontally */
+        gap: 15px; /* Space between the name fields */
+        width: 100%; /* Ensure it takes up full width */
+    }
+
+        .form-group-inline .form-group {
+            flex: 1; /* Make each input take equal width */
         }
 
-    .search-slt {
-        margin: 6px 0; /* Add some spacing */
+    label {
+        margin-bottom: 5px;
+        font-size: 0.85em;
+    }
+
+    input,
+    select,
+    button {
+        height: 40px;
+    }
+
+    .btn {
+        margin-top: 0;
+    }
+
+    /* Ensure form fields don't stretch too much on larger screens */
+    .form-group-inline input {
+        width: 100%;
     }
 </style>
+
+<script>
+    // Dynamically calculate the max and min values for the year
+    document.addEventListener("DOMContentLoaded", function () {
+        const yearInput = document.querySelector("input[name='Year']");
+        const currentYear = new Date().getFullYear();
+        yearInput.min = currentYear - 10;
+        yearInput.max = currentYear;
+    });
+</script>
 
 <section class="image-sec">
     <img src="https://www.texasscca.org/tr/wp-content/uploads/2016/01/logo.png">
 </section>
+
 <section class="search-sec">
-    <div class="container">
-        <form method="post" asp-controller="Results" asp-action="Results" enctype="multipart/form-data">
-            <div class="row">
-                <div class="col-lg-12">
-                    <div class="row">
-                        <div class="form-control">
-                            <label asp-for="Name">Name</label>
-                            <input asp-for="Name" class="form-control search-slt" placeholder="LastName, FirstName">
-                            <span asp-validation-for="Name" class="text-danger"></span>
-
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 p-0">
-                            <label asp-for="Year">Year</label>
-                            <input asp-for="Year" type="number" class="form-control search-slt" placeholder="Year" min="0" step="1">
-                            <span asp-validation-for="Year" class="text-danger"></span>
-
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 p-0">
-                            <select asp-for="PaxRaw" class="form-control search-slt" id="exampleFormControlSelect1">
-                                <option value=false>Final Results</option>
-                                <option value=true>Raw and Pax Results</option>
-                                <span asp-validation-for="PaxRaw" class="text-danger"></span>
-
-                            </select>
-                        </div>
-                        <div class="col-lg-3 col-md-3 col-sm-12 p-0">
-                            <button type="submit" class="btn btn-primary">Search</button>
-                        </div>
+    <div class="form-container">
+        <form method="post" asp-controller="Results" asp-action="Index" enctype="multipart/form-data">
+            <!-- Name Input -->
+            <div class="form-group">
+                <label>Name</label>
+                <div class="form-group-inline">
+                    <div class="form-group">
+                        <input pattern="[A-Za-z]+" asp-for="FirstName" 
+                        class="form-control search-slt" 
+                        placeholder="First Name" 
+                        required>
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <input pattern="[A-Za-z]+" asp-for="LastName" 
+                        class="form-control search-slt" 
+                        placeholder="Last Name" 
+                        required>
+                        <span asp-validation-for="LastName" class="text-danger"></span>
                     </div>
                 </div>
             </div>
+
+            <!-- Year Input -->
+            <div class="form-group">
+                <label asp-for="Year">Year</label>
+                <input asp-for="Year" type="number" 
+                class="form-control search-slt" 
+                placeholder="Year" 
+                min="0" step="1" 
+                required 
+                title="Year must be within the last 10 years">
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+
+            <!-- PaxRaw Dropdown -->
+            <div class="form-group">
+                <label asp-for="PaxRaw">Final Results or Pax/Raw</label>
+                <select asp-for="PaxRaw" class="form-control search-slt" id="exampleFormControlSelect1">
+                    <option value=false>Final Results</option>
+                    <option value=true>Raw and Pax Results</option>
+                </select>
+                <span asp-validation-for="PaxRaw" class="text-danger"></span>
+            </div>
+
+            <!-- Search Button -->
+            <button type="submit" class="btn btn-primary">Search</button>
         </form>
     </div>
-</section
+</section>
