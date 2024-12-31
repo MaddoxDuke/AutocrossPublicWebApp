@@ -5,8 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AutocrossPublicWebApp.Models
 {
     public class EventResult {
-        [Key]
-        public int Id { get; set; }
+        public List<int> EventNum { get; set; }
         public string Name { get; set; }
         public int Year { get; set; }
         public bool PaxRaw { get; set; }

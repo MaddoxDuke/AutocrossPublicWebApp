@@ -60,7 +60,6 @@ namespace AutocrossPublicWebApp.Services
 
             for (int i = 1; i <= Reading.DocSize; i++)
             {
-
                 httpClient = new HttpClient();
                 html = httpClient.GetStringAsync(urls[i - 1]).Result;
                 htmlDocument = new HtmlDocument();
@@ -81,14 +80,16 @@ namespace AutocrossPublicWebApp.Services
 
             Console.WriteLine(Reading.TrNthChild[0]);
 
-            if (Reading.PaxRaw) { 
+            if (Reading.PaxRaw) {
+                searchNum = 175;
                 for (int j = 0; j < Reading.DocSize; j++)
                 { // loop to locate row that contains name
                     Console.WriteLine("Searching doc #" + (j+1));
-                    for (int i = 1; i < searchNum; i++)
+                    for (int i = 2; i < searchNum; i++)
                     {
 
                         if (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + i + "]/td[5]") == null) break; // failsafe, exits for loop if null, this means it has reached the end of the webpage.
+
 
                         if (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + i + "]/td[5]").InnerText.Contains(Name))
                         { // checks if name exists on each line.
@@ -137,6 +138,7 @@ namespace AutocrossPublicWebApp.Services
             resultModel.AutoxClass = new List<string>();
             resultModel.PaxTime = new List<float>();
             resultModel.RawTime = new List<float>();
+            resultModel.EventNum = new List<int>();
 
 
 			for (int j = 0; j < Reading.DocSize; j++) {
@@ -145,6 +147,9 @@ namespace AutocrossPublicWebApp.Services
 					if (j == Reading.DocSize - 1) break;
 					else j++;
 				}
+                resultModel.EventNum.Add(j);
+
+                if (j != 0 && j != (Reading.DocSize-1)) resultModel.FinalTimes.Add("/");
 
 				if (eventCount == Reading.DocSize) Console.WriteLine(Reading.Name + " did not participate in any events for the year " + Reading.Year);
 

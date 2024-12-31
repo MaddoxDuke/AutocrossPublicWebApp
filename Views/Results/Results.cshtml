@@ -1,12 +1,21 @@
 ﻿@model EventResult
 
+<style>
+    table {
+        border-collapse: separate; /* Ensures border-spacing is applied */
+        border-spacing: 0 15px; /* Adds 15px vertical spacing between rows */
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #ccc; /* Optional, for visibility */
+        padding: 10px;
+        text-align: left;
+    }
+</style>
+
+
 <table border="1">
-    <thead>
-        <tr>
-            <th>Property</th>
-            <th>Value</th>
-        </tr>
-    </thead>
     <tbody>
         <tr>
             <td>Name</td>
@@ -20,13 +29,15 @@
             <td>PaxRaw</td>
             <td>@Model.PaxRaw</td>
         </tr>
-
         @{
-            int i = 0;
+            int tempVal = 0;
         }
+     
         @for (int j = 0; j < Model.AutoxClass.Count; j++) {
+            int runCounter = 1;
+
             <tr>
-                <td>Event #@(j + 1)</td>
+                <td>Event #@Model.EventNum[j]</td>
                 <td>
                     <strong>AutoxClass:</strong> @Model.AutoxClass[j] <br>
                     <strong>ClassPlacement:</strong> @Model.ClassPlacement[j] <br>
@@ -35,13 +46,15 @@
                         <strong>Pax Time:</strong> @Model.PaxTime[j] <br>
                         <strong>Raw Time:</strong> @Model.RawTime[j] <br>
                     } else {
-                        while (@i < Model.FinalTimes.Count) {
-                            if (Model.FinalTimes[i] == "") {
-                                i++;
+                        for (int i = tempVal;  i < Model.FinalTimes.Count; i++) {
+                            if (Model.FinalTimes[i] == "/") {
+                                tempVal = i + 1;
                                 break;
                             }
-                            i++;
-                            <strong>Run #@(i + 1):</strong> @Model.FinalTimes[i] <br>
+                            <td>
+                                <strong>Run #@(runCounter):</strong> @Model.FinalTimes[i] <br>
+                            </td>
+                            runCounter++;
                         }
                     }
                 </td>
