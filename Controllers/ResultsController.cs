@@ -4,7 +4,6 @@ using AutocrossPublicWebApp.Data;
 using AutocrossPublicWebApp.ViewModels;
 using AutocrossPublicWebApp.Interfaces;
 using AutocrossPublicWebApp.Services;
-using Microsoft.AspNetCore.Http;
 
 namespace AutocrossPublicWebApp.Controllers {
     public class ResultsController : Controller {

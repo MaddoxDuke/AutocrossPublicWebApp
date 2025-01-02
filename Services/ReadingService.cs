@@ -9,25 +9,20 @@ namespace AutocrossPublicWebApp.Services
 {
     public class ReadingService : ReadingModel
     {
-
         ReadingModel Reading = new ReadingModel();
-
         public void setYearDoc(int Year, bool paxAndRaw) {
 
 			Console.WriteLine("Running setYearDoc Function.");
 
 			Reading.Year = Year;
             Reading.PaxRaw = paxAndRaw;
+            Reading.DocSize = 0;
+
             int currentYear = DateTime.Now.Year;
             string url = null;
             string[] urls = new string[12];
 
-            if (Year < currentYear - 10 || Year > currentYear)
-            {
-                Console.WriteLine("Year entered is invalid.");
-                return;
-            }
-            if (Year == currentYear)
+            if (Year == currentYear || Year == 2024)
             {
                 url = "https://www.texasscca.org/solo/results/";
             }
@@ -39,8 +34,7 @@ namespace AutocrossPublicWebApp.Services
             htmlDocument.LoadHtml(html);
 
             if (Reading.PaxRaw) { 
-                for (int i = 1; i < 12; i++)
-                {
+                for (int i = 1; i < 12; i++) {
                     if (htmlDocument.DocumentNode.SelectSingleNode("//*[@id=\"tablepress-300-" + (Year - 2000) + "R\"]/tbody/tr[" + i + "]/td[5]/a") != null)
                     { // td[5] instead of td[4] for the pax and raw link
                         urls[i - 1] = htmlDocument.DocumentNode.SelectSingleNode("//*[@id=\"tablepress-300-" + (Year - 2000) + "R\"]/tbody/tr[" + i + "]/td[5]/a").Attributes["href"].Value; //links for final results
@@ -79,8 +73,6 @@ namespace AutocrossPublicWebApp.Services
 			int searchNum = 350;
             Reading.TrNthChild = new int[Reading.DocSize];
 
-            Console.WriteLine(Reading.TrNthChild[0]);
-
             if (Reading.PaxRaw) {
                 searchNum = 175;
                 for (int j = 0; j < Reading.DocSize; j++)
@@ -103,7 +95,7 @@ namespace AutocrossPublicWebApp.Services
                     }
                     if (Reading.TrNthChild[j] == 0) Console.WriteLine("Name not found on Doc #" + (j + 1));
                     Console.WriteLine("Loading... (" + (j + 1) + "/" + Reading.DocSize + ")");
-                    Console.WriteLine(Reading.TrNthChild[j] + "\n");
+                    Console.WriteLine(Reading.TrNthChild[j]);
                 }
             
             } else {
