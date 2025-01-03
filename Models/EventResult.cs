@@ -1,8 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace AutocrossPublicWebApp.Models
+﻿namespace AutocrossPublicWebApp.Models
 {
     public class EventResult {
         public bool DidNotParticipate { get; set; }
