@@ -161,25 +161,27 @@ namespace AutocrossPublicWebApp.Services
 
                 result.FinalTimes = new List<string>();
 
-                if (!Reading.PaxRaw) {
+                if (!Reading.PaxRaw) { //searches final times
 
                     result.AutoxClass = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[2]").InnerText);
 
-					for (int i = 7; i <= 9; i++) {
+					for (int i = 7; i <= 9; i++) { //loop for run times.
+
 						temp = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[" + i + "]").InnerText);
-                        result.FinalTimes.Add(temp);
+                        if (!String.IsNullOrWhiteSpace(temp) && temp.Length >= 7) temp = temp.Substring(0, 7); // ensures only the times get added.
+                        result.FinalTimes.Add(temp); 
+
 						temp = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + (Reading.TrNthChild[j] + 1) + "]/td[" + i + "]").InnerText);// time results, second row.
-						result.FinalTimes.Add(temp);
+                        if (!String.IsNullOrWhiteSpace(temp) && temp.Length >= 7) temp = temp.Substring(0, 7);
+                        result.FinalTimes.Add(temp);
 					}
 
 					result.ClassPlacement = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[1]").InnerText);
-				} else {
+				} else { // searches paxRaw times
 
-					result.AutoxClass = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[3]").InnerText);
-
+                    result.AutoxClass = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[3]").InnerText);
 					result.PaxTime = (float.Parse(Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[9]").InnerText, CultureInfo.InvariantCulture.NumberFormat));
 					result.RawTime = (float.Parse(Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[7]").InnerText, CultureInfo.InvariantCulture.NumberFormat));
-
 					result.PaxPlacement = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[1]").InnerText);
 					result.ClassPlacement = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[2]").InnerText);
 
