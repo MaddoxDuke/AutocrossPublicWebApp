@@ -1,9 +1,6 @@
 ﻿using AutocrossPublicWebApp.Models;
-using AutocrossPublicWebApp.Controllers;
 using HtmlAgilityPack;
-using System.Diagnostics.Tracing;
 using System.Globalization;
-using AutocrossPublicWebApp.ViewModels;
 
 namespace AutocrossPublicWebApp.Services
 {
@@ -119,8 +116,7 @@ namespace AutocrossPublicWebApp.Services
 			}
 
 
-        }
-        public List<EventResult> saveToEventResult() {
+        }        public List<EventResult> saveToEventResult() {
 
 			int eventCount = 0;
 
@@ -165,16 +161,18 @@ namespace AutocrossPublicWebApp.Services
 
                     result.AutoxClass = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[2]").InnerText);
 
-					for (int i = 7; i <= 9; i++) { //loop for run times.
+                    for (int i = 7; i <= 9; i++) { //loop for run times.
 
-						temp = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[" + i + "]").InnerText);
-                        if (!String.IsNullOrWhiteSpace(temp) && temp.Length >= 7) temp = temp.Substring(0, 7); // ensures only the times get added.
-                        result.FinalTimes.Add(temp); 
-
-						temp = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + (Reading.TrNthChild[j] + 1) + "]/td[" + i + "]").InnerText);// time results, second row.
-                        if (!String.IsNullOrWhiteSpace(temp) && temp.Length >= 7) temp = temp.Substring(0, 7);
+                        temp = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[" + i + "]").InnerText);
+                        if (!String.IsNullOrWhiteSpace(temp) && temp.Length >= 9) temp = temp.Substring(0, 9); // ensures only the times get added.
                         result.FinalTimes.Add(temp);
-					}
+
+                    }
+                    for (int i = 7; i <= 9; i++) {
+                        temp = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + (Reading.TrNthChild[j] + 1) + "]/td[" + i + "]").InnerText);// time results, second row.
+                        if (!String.IsNullOrWhiteSpace(temp) && temp.Length >= 9) temp = temp.Substring(0, 9);
+                        result.FinalTimes.Add(temp);
+                    }
 
 					result.ClassPlacement = (Reading.SelectedDocs[j].DocumentNode.SelectSingleNode("/html/body/a/table[2]/tbody/tr[" + Reading.TrNthChild[j] + "]/td[1]").InnerText);
 				} else { // searches paxRaw times
