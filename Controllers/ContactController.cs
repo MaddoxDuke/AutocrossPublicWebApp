@@ -20,10 +20,10 @@ public class ContactController : Controller {
                     IsBodyHtml = true,
                 };
 
-                mailMessage.To.Add("Maddoxduke911@Gmail.com");
+                mailMessage.To.Add("support.autocrosssearch.org");
 
                 smtpClient.Send(mailMessage);
-                return RedirectToAction("ThankYou"); // Redirect to a thank-you page
+                return RedirectToAction("Thank You"); // Redirect to a thank-you page
             } catch (Exception) {
                 // Handle error sending email
                 ModelState.AddModelError("", "Error sending message. Please try again later.");
